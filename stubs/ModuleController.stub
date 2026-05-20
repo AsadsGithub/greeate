@@ -1,0 +1,34 @@
+<?php
+
+namespace {{ namespace }};
+
+use Greeate\Greeate\Contracts\{{ repositoryInterface }};
+use Greeate\Greeate\Http\Controllers\BaseController;
+use Greeate\Greeate\Traits\CrudController;
+
+class {{ class }} extends BaseController
+{
+    use CrudController;
+
+    public function __construct(protected {{ repositoryInterface }} $repository) {}
+
+    protected function getRepository(): {{ repositoryInterface }}
+    {
+        return $this->repository;
+    }
+
+    protected function getResourceName(): string
+    {
+        return '{{ resource }}';
+    }
+
+    protected function getViewPrefix(): string
+    {
+        return 'greeate::admin.{{ resource }}';
+    }
+
+    protected function getRoutePrefix(): string
+    {
+        return 'greeate.admin.{{ resource }}';
+    }
+}

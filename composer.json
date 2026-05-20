@@ -1,0 +1,74 @@
+{
+    "name": "greeate/greeate",
+    "description": "Modern SaaS Admin Panel Package for Laravel",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["laravel", "admin", "saas", "cms", "dashboard"],
+    "authors": [
+        {
+            "name": "Greeate",
+            "email": "hello@greeate.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^12.0",
+        "illuminate/database": "^12.0",
+        "illuminate/http": "^12.0",
+        "illuminate/routing": "^12.0",
+        "illuminate/auth": "^12.0",
+        "illuminate/notifications": "^12.0",
+        "illuminate/broadcasting": "^12.0",
+        "illuminate/filesystem": "^12.0",
+        "illuminate/validation": "^12.0",
+        "illuminate/console": "^12.0",
+        "illuminate/view": "^12.0",
+        "illuminate/cache": "^12.0",
+        "illuminate/queue": "^12.0",
+        "laravel/sanctum": "^4.0",
+        "spatie/laravel-permission": "^6.0",
+        "spatie/laravel-activitylog": "^4.0",
+        "kreait/laravel-firebase": "^5.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Greeate\\Greeate\\": "src/",
+            "Greeate\\Greeate\\Database\\Factories\\": "database/factories/",
+            "Greeate\\Greeate\\Database\\Seeders\\": "database/seeders/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Greeate\\Greeate\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Greeate\\Greeate\\GreeateServiceProvider"
+            ],
+            "aliases": {
+                "Greeate": "Greeate\\Greeate\\Facades\\Greeate"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test": "pest"
+    }
+}

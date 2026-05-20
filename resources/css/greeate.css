@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    [dir="rtl"] .sidebar-link {
+        @apply flex-row-reverse;
+    }
+}
+
+@layer components {
+    .sidebar-link {
+        @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
+    }
+    .sidebar-link.active {
+        @apply bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium;
+    }
+    .btn-primary {
+        @apply inline-flex items-center justify-center px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors;
+    }
+    .btn-secondary {
+        @apply inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors;
+    }
+    .btn-ghost {
+        @apply inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
+    }
+    .btn-danger {
+        @apply inline-flex items-center justify-center px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors;
+    }
+    .btn-sm {
+        @apply px-2.5 py-1 text-xs;
+    }
+    .form-input {
+        @apply block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white;
+    }
+    .badge {
+        @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300;
+    }
+}
+
+[x-cloak] { display: none !important; }
+
+.skeleton {
+    @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+}

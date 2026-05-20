@@ -1,0 +1,14 @@
+<?php
+
+namespace Greeate\Greeate\Http\Controllers\Auth;
+
+use Greeate\Greeate\Http\Controllers\BaseController;
+use Illuminate\Http\Request;
+
+class RegisterController extends BaseController
+{
+    public function index()
+    {
+        return view('greeate::auth.register');
+    }
+}
