@@ -1,5 +1,5 @@
-import { useGreeateTranslation } from '../../greeate/hooks/use-greeate-translation';
-import { type GreeateSharedData } from '../../greeate/types';
+import { useGreeateTranslation } from '../../../greeate/hooks/use-greeate-translation';
+import { type GreeateSharedData } from '../../../greeate/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 
 export default function GreeateHome() {

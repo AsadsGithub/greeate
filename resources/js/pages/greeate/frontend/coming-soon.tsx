@@ -1,4 +1,4 @@
-import { useGreeateTranslation } from '../../greeate/hooks/use-greeate-translation';
+import { useGreeateTranslation } from '../../../greeate/hooks/use-greeate-translation';
 import { Head, Link } from '@inertiajs/react';
 
 export default function GreeateComingSoon() {

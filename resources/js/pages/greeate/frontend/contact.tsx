@@ -1,7 +1,7 @@
-import { Button } from '../../greeate/components/ui/button';
-import { Input } from '../../greeate/components/ui/input';
-import { Label } from '../../greeate/components/ui/label';
-import { useGreeateTranslation } from '../../greeate/hooks/use-greeate-translation';
+import { Button } from '../../../greeate/components/ui/button';
+import { Input } from '../../../greeate/components/ui/input';
+import { Label } from '../../../greeate/components/ui/label';
+import { useGreeateTranslation } from '../../../greeate/hooks/use-greeate-translation';
 import { Form, Head, Link } from '@inertiajs/react';
 
 export default function GreeateContact() {

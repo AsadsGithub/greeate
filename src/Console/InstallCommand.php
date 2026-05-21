@@ -41,6 +41,7 @@ class InstallCommand extends Command
 
         if (! $this->option('no-seed')) {
             $this->runSeeders();
+            $this->wireHostDatabaseSeeder();
         }
 
         $this->setupBroadcasting();
@@ -203,6 +204,32 @@ class InstallCommand extends Command
             $seeder = new GreeateDatabaseSeeder;
             $seeder->setCommand($this);
             $seeder->run();
+        });
+    }
+
+    protected function wireHostDatabaseSeeder(): void
+    {
+        $this->components->task('Wiring DatabaseSeeder for Greeate', function () {
+            $path = database_path('seeders/DatabaseSeeder.php');
+            if (! File::exists($path)) {
+                return;
+            }
+
+            $content = File::get($path);
+            $call = '$this->call(\\Greeate\\Greeate\\Database\\Seeders\\GreeateDatabaseSeeder::class);';
+
+            if (str_contains($content, 'GreeateDatabaseSeeder')) {
+                return;
+            }
+
+            $content = preg_replace(
+                '/(public function run\(\): void\s*\{)/',
+                "$1\n        {$call}\n",
+                $content,
+                1
+            );
+
+            File::put($path, $content);
         });
     }
 
