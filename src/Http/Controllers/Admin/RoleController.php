@@ -34,4 +34,20 @@ class RoleController extends BaseController
     {
         return 'greeate.admin.roles';
     }
+
+    protected function validateStore(Request $request): array
+    {
+        return $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name',
+            'alias' => 'nullable|string|max:255',
+        ]);
+    }
+
+    protected function validateUpdate(Request $request, int $id): array
+    {
+        return $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name,'.$id,
+            'alias' => 'nullable|string|max:255',
+        ]);
+    }
 }

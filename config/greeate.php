@@ -11,7 +11,11 @@ return [
     'load_frontend_routes' => env('GREEATE_LOAD_FRONTEND_ROUTES', true),
 
     'route_prefix' => env('GREEATE_ROUTE_PREFIX', 'greeate'),
-    'admin_prefix' => env('GREEATE_ADMIN_PREFIX', 'admin'),
+    // Clinic-style admin URL prefix (clinic_backend uses /dashboard).
+    'admin_prefix' => env('GREEATE_ADMIN_PREFIX', 'dashboard'),
+
+    // When true, installer patches host routes/web.php so / redirects to Greeate login/admin.
+    'patch_host_home_route' => env('GREEATE_PATCH_HOST_HOME', true),
     'api_prefix' => env('GREEATE_API_PREFIX', 'api/v1'),
 
     'guard' => env('GREEATE_GUARD', 'web'),

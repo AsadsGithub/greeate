@@ -15,7 +15,26 @@ class NotificationController extends BaseController
             ->latest()
             ->paginate(20);
 
-        return $this->greeatePage('greeate/admin/notifications/index', compact('notifications'));
+        return $this->greeatePage('greeate/admin/crud/index', [
+            'module' => 'notifications',
+            'moduleConfig' => [
+                'permission' => 'notifications.view',
+                'readonly' => true,
+                'columns' => [
+                    ['key' => 'id', 'label' => 'ID'],
+                    ['key' => 'title', 'label' => 'Title'],
+                    ['key' => 'type', 'label' => 'Type'],
+                    ['key' => 'read_at', 'label' => 'Read', 'type' => 'date'],
+                    ['key' => 'created_at', 'label' => 'Created', 'type' => 'date'],
+                ],
+            ],
+            'items' => $notifications,
+            'filters' => [],
+            'title' => __('greeate::nav.notifications'),
+            'basePath' => '/'.trim(config('greeate.admin_prefix', 'dashboard'), '/').'/notifications',
+            'routePrefix' => 'greeate.admin.notifications',
+            'action' => 'index',
+        ]);
     }
 
     public function markAsRead(int $id)

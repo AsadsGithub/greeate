@@ -30,6 +30,7 @@ class InstallCommand extends Command
         $this->publishViteResources();
         $this->wireViteConfig();
         $this->wireAppCss();
+        $this->patchHostHomeRoute();
         $this->setDefaultEnv();
 
         if (! $this->option('no-migrate')) {
@@ -49,7 +50,7 @@ class InstallCommand extends Command
 
         $this->newLine();
         $this->components->info('Greeate installed successfully!');
-        $this->line('Admin URL: /'.config('greeate.admin_prefix', 'admin'));
+        $this->line('Admin URL: /'.config('greeate.admin_prefix', 'dashboard'));
         $this->line('Login URL: /login');
         $this->line('Default admin: '.config('greeate.default_admin.email'));
         $this->line('Default password: '.config('greeate.default_admin.password'));
@@ -299,6 +300,69 @@ class InstallCommand extends Command
         });
     }
 
+    protected function patchHostHomeRoute(): void
+    {
+        if (! config('greeate.patch_host_home_route', true)) {
+            return;
+        }
+
+        $this->components->task('Patching host home route (/) for Greeate starter', function () {
+            $webRoutes = base_path('routes/web.php');
+            if (! File::exists($webRoutes)) {
+                return;
+            }
+
+            $stub = <<<'PHP'
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('greeate.admin.dashboard');
+    }
+
+    return redirect()->route('greeate.login');
+})->name('home');
+
+PHP;
+
+            $content = File::get($webRoutes);
+
+            if (str_contains($content, "route('greeate.login')") && str_contains($content, "Route::get('/',")) {
+                return;
+            }
+
+            $patterns = [
+                "/Route::inertia\s*\(\s*['\"]\/['\"]\s*,\s*['\"]welcome['\"]\s*\)[^;]*;/",
+                "/Route::get\s*\(\s*['\"]\/['\"][^;]*welcome[^;]*;/",
+            ];
+
+            $replaced = false;
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $content)) {
+                    $content = preg_replace($pattern, rtrim($stub), $content, 1);
+                    $replaced = true;
+                    break;
+                }
+            }
+
+            // Disable Laravel starter dashboard on /dashboard (conflicts with Greeate admin).
+            $content = preg_replace(
+                "/Route::inertia\s*\(\s*['\"]dashboard['\"]\s*,\s*['\"]dashboard['\"]\s*\)[^;]*;/",
+                "// Greeate admin uses /dashboard — starter dashboard disabled",
+                $content
+            );
+
+            if (! $replaced && ! str_contains($content, "route('greeate.login')")) {
+                $content = preg_replace(
+                    '/<\?php\s*\n/',
+                    "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n\n".$stub,
+                    $content,
+                    1
+                );
+            }
+
+            File::put($webRoutes, $content);
+        });
+    }
+
     protected function setDefaultEnv(): void
     {
         $envPath = base_path('.env');
@@ -310,6 +374,8 @@ class InstallCommand extends Command
         $vars = [
             'GREEATE_UI' => 'inertia',
             'GREEATE_LOAD_FRONTEND_ROUTES' => 'false',
+            'GREEATE_ADMIN_PREFIX' => 'dashboard',
+            'GREEATE_PATCH_HOST_HOME' => 'true',
         ];
 
         foreach ($vars as $key => $value) {

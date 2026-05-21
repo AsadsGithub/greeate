@@ -1,6 +1,6 @@
 /**
- * Greeate Inertia/React theme — import from host app.css:
- * @import './greeate-inertia.css';
+ * Greeate Inertia/React — clinic_backend purple theme
+ * Import from host app.css: @import './greeate-inertia.css';
  */
 @source '../js/pages/greeate/**/*.tsx';
 @source '../js/greeate/**/*.tsx';
@@ -8,6 +8,48 @@
 @source '../../vendor/greeate/greeate/resources/js/greeate/**/*.tsx';
 
 :root {
+    --background: oklch(0.98 0.01 280);
+    --foreground: oklch(0.25 0.02 280);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.25 0.02 280);
+    --primary: oklch(0.65 0.15 285);
+    --primary-foreground: oklch(0.98 0.01 280);
+    --secondary: oklch(0.93 0.02 285);
+    --secondary-foreground: oklch(0.35 0.02 280);
+    --muted: oklch(0.95 0.015 285);
+    --muted-foreground: oklch(0.5 0.02 280);
+    --accent: oklch(0.93 0.03 285);
+    --accent-foreground: oklch(0.3 0.02 280);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.88 0.02 285);
+    --input: oklch(0.88 0.02 285);
+    --ring: oklch(0.65 0.15 285);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.97 0.015 285);
+    --sidebar-foreground: oklch(0.3 0.02 280);
+    --sidebar-primary: oklch(0.65 0.15 285);
+    --sidebar-primary-foreground: oklch(0.98 0.01 280);
+    --sidebar-accent: oklch(0.93 0.02 285);
+    --sidebar-accent-foreground: oklch(0.35 0.02 280);
+    --sidebar-border: oklch(0.88 0.02 285);
     --primary-gradient-start: #a8b5ff;
     --primary-gradient-end: #6b46c1;
+    --auth-gradient: linear-gradient(135deg, #a8b5ff 0%, #8b7fd9 50%, #6b46c1 100%);
+}
+
+.dark {
+    --background: oklch(0.18 0.015 280);
+    --foreground: oklch(0.95 0.01 280);
+    --card: oklch(0.2 0.015 280);
+    --card-foreground: oklch(0.95 0.01 280);
+    --primary: oklch(0.7 0.18 285);
+    --primary-foreground: oklch(0.15 0.015 280);
+    --secondary: oklch(0.3 0.02 285);
+    --muted: oklch(0.28 0.02 285);
+    --muted-foreground: oklch(0.7 0.02 280);
+    --border: oklch(0.3 0.02 285);
+    --input: oklch(0.3 0.02 285);
+    --sidebar: oklch(0.22 0.02 280);
+    --sidebar-foreground: oklch(0.95 0.01 280);
+    --sidebar-border: oklch(0.3 0.02 285);
 }

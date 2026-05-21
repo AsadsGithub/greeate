@@ -2,8 +2,10 @@
 
 namespace Greeate\Greeate\Traits;
 
+use Greeate\Greeate\Support\GreeateModuleRegistry;
 use Greeate\Greeate\Support\GreeateUi;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 trait CrudController
 {
@@ -17,27 +19,34 @@ trait CrudController
 
     public function index(Request $request)
     {
+        $module = $this->getModuleKey();
         $items = $this->getRepository()->paginate($request);
 
         return $this->renderCrud('index', [
+            'module' => $module,
+            'moduleConfig' => GreeateModuleRegistry::get($module),
             'items' => $items,
-            'resource' => $this->getResourceName(),
-            'title' => __("greeate::nav.{$this->getResourceName()}"),
+            'filters' => $request->only(['search', 'status', 'per_page']),
+            'title' => __("greeate::nav.{$this->getNavKey()}"),
         ]);
     }
 
     public function create()
     {
+        $module = $this->getModuleKey();
+
         return $this->renderCrud('create', [
-            'resource' => $this->getResourceName(),
-            'title' => __('greeate::actions.create').' '. __("greeate::nav.{$this->getResourceName()}"),
+            'module' => $module,
+            'moduleConfig' => GreeateModuleRegistry::get($module),
+            'title' => __('greeate::actions.create').' '.__("greeate::nav.{$this->getNavKey()}"),
+            'formOptions' => $this->getFormOptions(),
         ]);
     }
 
     public function store(Request $request)
     {
         $data = $this->validateStore($request);
-        $item = $this->withTransaction(fn () => $this->getRepository()->create($data));
+        $this->withTransaction(fn () => $this->getRepository()->create($data));
 
         return redirect()
             ->route($this->getRoutePrefix().'.index')
@@ -46,22 +55,28 @@ trait CrudController
 
     public function show(int $id)
     {
+        $module = $this->getModuleKey();
         $item = $this->getRepository()->findOrFail($id);
 
         return $this->renderCrud('show', [
+            'module' => $module,
+            'moduleConfig' => GreeateModuleRegistry::get($module),
             'item' => $item,
-            'resource' => $this->getResourceName(),
+            'title' => __("greeate::nav.{$this->getNavKey()}"),
         ]);
     }
 
     public function edit(int $id)
     {
+        $module = $this->getModuleKey();
         $item = $this->getRepository()->findOrFail($id);
 
         return $this->renderCrud('edit', [
+            'module' => $module,
+            'moduleConfig' => GreeateModuleRegistry::get($module),
             'item' => $item,
-            'resource' => $this->getResourceName(),
-            'title' => __('greeate::actions.edit').' '. __("greeate::nav.{$this->getResourceName()}"),
+            'title' => __('greeate::actions.edit').' '.__("greeate::nav.{$this->getNavKey()}"),
+            'formOptions' => $this->getFormOptions(),
         ]);
     }
 
@@ -91,24 +106,43 @@ trait CrudController
         return back()->with('success', __('greeate::messages.status_updated'));
     }
 
+    protected function getModuleKey(): string
+    {
+        return GreeateModuleRegistry::urlSegment($this->getResourceName());
+    }
+
+    protected function getNavKey(): string
+    {
+        return str_replace('-', '_', $this->getResourceName());
+    }
+
+    protected function getBasePath(): string
+    {
+        $prefix = trim(config('greeate.admin_prefix', 'dashboard'), '/');
+
+        return '/'.$prefix.'/'.GreeateModuleRegistry::urlSegment($this->getResourceName());
+    }
+
+    protected function getFormOptions(): array
+    {
+        return [
+            'roles' => Role::query()->orderBy('name')->pluck('name', 'name')->toArray(),
+        ];
+    }
+
     protected function renderCrud(string $action, array $props = [])
     {
         if (GreeateUi::usesInertia()) {
-            $component = GreeateUi::inertiaComponentFromBladePrefix($this->getViewPrefix(), $action);
+            $page = match ($action) {
+                'index' => 'greeate/admin/crud/index',
+                'show' => 'greeate/admin/crud/show',
+                default => 'greeate/admin/crud/form',
+            };
 
-            if ($action === 'index') {
-                $adminPrefix = trim(config('greeate.admin_prefix', 'admin'), '/');
-
-                return $this->greeatePage('greeate/admin/resource-index', array_merge($props, [
-                    'component' => $component,
-                    'routePrefix' => $this->getRoutePrefix(),
-                    'basePath' => '/'.$adminPrefix.'/'.str_replace('_', '-', $this->getResourceName()),
-                ]));
-            }
-
-            return $this->greeatePage('greeate/admin/resource-form', array_merge($props, [
+            return $this->greeatePage($page, array_merge($props, [
                 'action' => $action,
                 'routePrefix' => $this->getRoutePrefix(),
+                'basePath' => $this->getBasePath(),
             ]));
         }
 

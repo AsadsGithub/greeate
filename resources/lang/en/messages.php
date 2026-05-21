@@ -8,6 +8,7 @@ return [
     'settings_saved' => 'Settings saved successfully.',
     'all_marked_read' => 'All notifications marked as read.',
     'no_records' => 'No records found.',
+    'delete_warning' => 'This action cannot be undone.',
     'no_notifications' => 'No notifications yet.',
     'unauthorized' => 'You are not authorized to perform this action.',
     'invalid_credentials' => 'Invalid credentials.',

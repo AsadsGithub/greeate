@@ -38,14 +38,39 @@ class ShareGreeateInertiaProps
                 __('greeate::stats'),
             ),
             'siteSettings' => $siteSettings,
+            'auth' => [
+                'user' => $this->serializeUser($user),
+            ],
+            'flash' => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+            ],
+            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'greeate' => [
                 'name' => config('greeate.name'),
-                'adminPrefix' => config('greeate.admin_prefix', 'admin'),
+                'adminPrefix' => config('greeate.admin_prefix', 'dashboard'),
                 'registerEnabled' => config('greeate.auth.register_enabled', false),
             ],
             'unreadNotificationCount' => $user instanceof Admin
                 ? app(NotificationService::class)->unreadCountFor($user)
                 : 0,
+        ];
+    }
+
+    protected function serializeUser(mixed $user): ?array
+    {
+        if (! $user) {
+            return null;
+        }
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'roles' => method_exists($user, 'getRoleNames') ? $user->getRoleNames()->toArray() : [],
+            'permissions' => method_exists($user, 'getAllPermissions')
+                ? $user->getAllPermissions()->pluck('name')->toArray()
+                : [],
         ];
     }
 }

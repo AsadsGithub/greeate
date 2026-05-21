@@ -7,8 +7,9 @@ export function useGreeatePermissions() {
     const permissions = user?.permissions ?? [];
     const roles = user?.roles ?? [];
 
-    const can = (permission: string) =>
-        roles.includes('super-admin') || permissions.includes(permission);
+    const isSuperAdmin = roles.includes('super-admin') || roles.includes('Super Admin');
 
-    return { can, isSuperAdmin: roles.includes('super-admin') };
+    const can = (permission: string) => isSuperAdmin || permissions.includes(permission);
+
+    return { can, isSuperAdmin };
 }

@@ -22,7 +22,25 @@ class ActivityLogController extends BaseController
 
         $logs = $query->paginate($request->integer('per_page', 20));
 
-        return $this->greeatePage('greeate/admin/activity-logs/index', compact('logs'));
+        return $this->greeatePage('greeate/admin/crud/index', [
+            'module' => 'activity-logs',
+            'moduleConfig' => [
+                'permission' => 'activity-logs.view',
+                'readonly' => true,
+                'columns' => [
+                    ['key' => 'id', 'label' => 'ID'],
+                    ['key' => 'description', 'label' => 'Description'],
+                    ['key' => 'event', 'label' => 'Event'],
+                    ['key' => 'created_at', 'label' => 'Date', 'type' => 'date'],
+                ],
+            ],
+            'items' => $logs,
+            'filters' => $request->only(['search']),
+            'title' => __('greeate::nav.activity_logs'),
+            'basePath' => '/'.trim(config('greeate.admin_prefix', 'dashboard'), '/').'/activity-logs',
+            'routePrefix' => 'greeate.admin.activity-logs',
+            'action' => 'index',
+        ]);
     }
 
     public function destroy(int $id)

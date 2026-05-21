@@ -1,153 +1,95 @@
 # Greeate Installation Guide
 
-Greeate defaults to **Laravel + React + Inertia** (clinic_backend style). Blade/Alpine remains available with `GREEATE_UI=blade`.
+Greeate gives you a **clinic_backend-style** Laravel + React + Inertia admin starter (purple login, sidebar, CRUD modules).
+
+After install, visiting **`/`** redirects to **`/login`**, not the Laravel welcome page.
 
 ---
 
-## Laravel 12 React / Inertia host (recommended)
+## URLs (default)
+
+| URL | What you see |
+|-----|----------------|
+| `/` | Redirect → `/login` |
+| `/login` | Purple gradient React admin login |
+| `/dashboard` | Admin panel (after login) |
+
+Default login: `admin@greeate.com` / `password`
+
+---
+
+## Laravel 12 React / Inertia host
 
 ### 1. Composer
 
 ```bash
 composer require greeate/greeate
 composer require spatie/laravel-permission spatie/laravel-activitylog laravel/sanctum inertiajs/inertia-laravel
-
-php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
-php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
-php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
 ```
 
-### 2. Environment (`.env`)
+### 2. `.env`
 
 ```env
 GREEATE_UI=inertia
 GREEATE_LOAD_FRONTEND_ROUTES=false
+GREEATE_ADMIN_PREFIX=dashboard
+GREEATE_PATCH_HOST_HOME=true
 ```
-
-- Host Inertia app stays on `/` (welcome, settings, etc.)
-- Greeate admin: `/admin`
-- Greeate login: `/login`
 
 ### 3. Auth (`config/auth.php`)
 
 ```php
 'defaults' => ['guard' => 'web', 'passwords' => 'users'],
-'guards' => [
-    'web' => ['driver' => 'session', 'provider' => 'admins'],
-],
-'providers' => [
-    'admins' => ['driver' => 'eloquent', 'model' => Greeate\Greeate\Models\Admin::class],
-],
+'guards' => ['web' => ['driver' => 'session', 'provider' => 'admins']],
+'providers' => ['admins' => ['driver' => 'eloquent', 'model' => Greeate\Greeate\Models\Admin::class]],
 ```
 
-### 4. Middleware (`bootstrap/app.php`)
-
-```php
-$middleware->web(append: [
-    \Greeate\Greeate\Http\Middleware\SetLocale::class,
-    \Greeate\Greeate\Http\Middleware\CheckMaintenanceMode::class,
-    // Host HandleInertiaRequests stays — Greeate adds ShareGreeateInertiaProps on its routes
-]);
-```
-
-Guest redirect for admin:
-
-```php
-$middleware->redirectGuestsTo(function (Request $request) {
-    $adminPrefix = trim(config('greeate.admin_prefix', 'admin'), '/');
-    if ($request->is($adminPrefix) || $request->is($adminPrefix.'/*')) {
-        return route('greeate.login');
-    }
-    return route('login');
-});
-```
-
-### 5. Install
+### 4. Install
 
 ```bash
 php artisan greeate:install --force
 npm install lucide-react clsx tailwind-merge
-npm run build
+npm run dev
 ```
 
-Installer publishes:
+Installer will:
+- Publish `resources/js/pages/greeate/**` and `resources/js/greeate/**`
+- Add `@import './greeate-inertia.css'` to `app.css`
+- **Replace** `Route::inertia('/', 'welcome')` with redirect to Greeate login
+- **Disable** conflicting `Route::inertia('dashboard', ...)` on host
 
-- `resources/js/pages/greeate/**` — Inertia pages
-- `resources/js/greeate/**` — layouts, components, hooks
-- `resources/css/greeate-inertia.css` — Tailwind sources
-
-### 6. Host `resources/css/app.css`
-
-Add:
-
-```css
-@import './greeate-inertia.css';
-```
-
-### 7. Host `resources/js/app.tsx`
-
-Greeate pages include their own layout. Ensure Inertia resolves `greeate/*` pages (Laravel Vite plugin does this when files exist under `resources/js/pages/greeate/`).
-
-Optional layout hook:
+### 5. `resources/js/app.tsx`
 
 ```tsx
 layout: (name) => {
-    if (name.startsWith('greeate/')) return null; // GreeateAppLayout is inside each page
-    // ... your existing layout rules
+    if (name.startsWith('greeate/')) return null;
+    // ...
 },
 ```
 
-### 8. Verify
+### 6. Run
 
-| URL | Expected |
-|-----|----------|
-| `/login` | Purple gradient React login |
-| `/admin` | React sidebar + dashboard |
-| Login | `admin@greeate.com` / `password` |
+```bash
+php artisan serve
+# Open http://127.0.0.1:8000/  → should redirect to /login
+```
 
 ---
 
-## Blade-only host (legacy)
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| Laravel welcome at `/` | Run `php artisan greeate:install --force` or patch `routes/web.php` manually |
+| Blank / unstyled login | Run `npm run dev` or `npm run build` |
+| 404 on `/admin` | Use `/dashboard` (default prefix) or set `GREEATE_ADMIN_PREFIX` |
+| Wrong guard | Set `config/auth.php` web guard → admins provider |
+
+---
+
+## Blade-only (legacy)
 
 ```env
 GREEATE_UI=blade
-GREEATE_LOAD_FRONTEND_ROUTES=true
-```
-
-```bash
-php artisan greeate:install --force
-npm install alpinejs --save-dev
-npm run build
-```
-
-Vite inputs: `resources/css/greeate.css`, `resources/js/greeate.js`
-
----
-
-## Uninstall / reinstall (Inertia host)
-
-See prompt in chat or run:
-
-```bash
-# Roll back greeate migrations, remove published files, composer remove greeate/greeate
-composer require greeate/greeate
-php artisan greeate:install --force
-npm run build
-```
-
----
-
-## Default credentials
-
-| Email | Password |
-|-------|----------|
-| admin@greeate.com | password |
-
----
-
-## Git install
-
-```json
-"repositories": [{"type": "vcs", "url": "https://github.com/AsadsGithub/greeate.git"}],
-"require": {"greeate/greeate": "dev-main"}
+GREEATE_ADMIN_PREFIX=admin
 ```
