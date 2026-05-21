@@ -20,12 +20,14 @@ class TranslationService
     {
         $locale = $locale ?? app()->getLocale();
 
-        $language = Cache::remember("greeate.lang.{$locale}", 3600, function () use ($locale) {
-            return Language::where('code', $locale)->first();
+        $direction = Cache::remember("greeate.lang.{$locale}.direction", 3600, function () use ($locale) {
+            return Language::query()
+                ->where('code', $locale)
+                ->value('direction');
         });
 
-        if ($language) {
-            return $language->isRtl();
+        if ($direction !== null) {
+            return $direction === 'rtl';
         }
 
         return in_array($locale, $this->rtlLocales, true);
@@ -33,17 +35,26 @@ class TranslationService
 
     public function getActiveLanguages()
     {
-        return Cache::remember('greeate.languages.active', 3600, function () {
-            return Language::where('is_active', true)->orderBy('sort_order')->get();
-        });
+        return Language::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
     }
 
     public function getDefaultLocale(): string
     {
         return Cache::remember('greeate.locale.default', 3600, function () {
-            $lang = Language::where('is_default', true)->first();
-
-            return $lang?->code ?? config('app.locale', 'en');
+            return Language::query()
+                ->where('is_default', true)
+                ->value('code') ?? config('app.locale', 'en');
         });
+    }
+
+    public function flushCache(): void
+    {
+        Cache::forget('greeate.locale.default');
+        foreach (['en', 'ar'] as $code) {
+            Cache::forget("greeate.lang.{$code}.direction");
+        }
     }
 }

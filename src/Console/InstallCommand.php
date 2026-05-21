@@ -42,6 +42,7 @@ class InstallCommand extends Command
         if (! $this->option('no-seed')) {
             $this->runSeeders();
             $this->wireHostDatabaseSeeder();
+            $this->clearStaleCache();
         }
 
         $this->setupBroadcasting();
@@ -204,6 +205,13 @@ class InstallCommand extends Command
             $seeder = new GreeateDatabaseSeeder;
             $seeder->setCommand($this);
             $seeder->run();
+        });
+    }
+
+    protected function clearStaleCache(): void
+    {
+        $this->components->task('Clearing application cache', function () {
+            Artisan::call('cache:clear');
         });
     }
 
