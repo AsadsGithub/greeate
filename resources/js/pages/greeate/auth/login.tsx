@@ -5,6 +5,8 @@ import { useGreeateTranslation } from '../../../greeate/hooks/use-greeate-transl
 import { cn } from '../../../greeate/lib/utils';
 import { type GreeateSharedData } from '../../../greeate/types';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { LanguageSwitcher } from '../../../greeate/components/language-switcher';
+import { useGreeateRTLInit } from '../../../greeate/hooks/use-greeate-rtl-init';
 import { LoaderCircle } from 'lucide-react';
 
 type Props = {
@@ -13,6 +15,7 @@ type Props = {
 };
 
 export default function GreeateLogin({ canResetPassword, status }: Props) {
+    useGreeateRTLInit();
     const { t, rtl } = useGreeateTranslation();
     const { siteSettings, greeate, flash } = usePage<GreeateSharedData>().props;
     const name = siteSettings?.site_name || greeate?.name || 'Greeate';
@@ -23,6 +26,9 @@ export default function GreeateLogin({ canResetPassword, status }: Props) {
             className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-[#A8B5FF] via-[#8B7FD9] to-[#6B46C1] p-6 dark:from-slate-900 dark:via-[#4C1D95] dark:to-[#3B0F6B]"
             dir={rtl ? 'rtl' : 'ltr'}
         >
+            <div className={cn('absolute top-6 z-10 flex items-center gap-3', rtl ? 'left-6' : 'right-6')}>
+                <LanguageSwitcher />
+            </div>
             <div className={cn('absolute top-6 z-10', rtl ? 'right-6' : 'left-6')}>
                 <div className="flex items-center gap-3">
                     {logo ? (

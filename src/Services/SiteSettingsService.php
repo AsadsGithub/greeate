@@ -45,6 +45,37 @@ class SiteSettingsService
         });
     }
 
+    /**
+     * @return array<int, array{id: int, key: string, value: string, type: string, group: string, description: string|null}>
+     */
+    public function getSettingsForGroup(string $group): array
+    {
+        return SiteSetting::query()
+            ->where('group', $group)
+            ->orderBy('key')
+            ->get()
+            ->map(fn (SiteSetting $s) => [
+                'id' => $s->id,
+                'key' => $s->key,
+                'value' => (string) $s->value,
+                'type' => $s->type,
+                'group' => $s->group,
+                'description' => $s->description,
+            ])
+            ->values()
+            ->all();
+    }
+
+    public function getAvailableGroups(): array
+    {
+        return SiteSetting::query()
+            ->select('group')
+            ->distinct()
+            ->orderBy('group')
+            ->pluck('group')
+            ->all();
+    }
+
     public function flush(): void
     {
         Cache::forget('greeate.site_settings');

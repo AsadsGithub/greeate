@@ -26,8 +26,10 @@ type NavItem = {
 
 type NavGroup = { title: string; items: NavItem[] };
 
-export function AppSidebar() {
-    const { t } = useGreeateTranslation();
+type Props = { onNavigate?: () => void };
+
+export function AppSidebar({ onNavigate }: Props = {}) {
+    const { t, rtl } = useGreeateTranslation();
     const { can, isSuperAdmin } = useGreeatePermissions();
     const page = usePage();
     const { greeate } = page.props as { greeate?: { adminPrefix: string } };
@@ -73,6 +75,7 @@ export function AppSidebar() {
             title: t('settings', 'Settings'),
             items: [
                 { title: t('settings', 'Settings'), href: link('/settings/general'), icon: Settings, permission: 'site-settings.general.view' },
+                { title: t('group_theme', 'Theme'), href: link('/settings/theme'), icon: Settings, permission: 'site-settings.branding.view' },
                 { title: t('activity_logs', 'Activity Logs'), href: link('/activity-logs'), icon: FileText, permission: 'activity-logs.view' },
                 { title: t('profile', 'Profile'), href: link('/profile'), icon: UserCog },
             ],
@@ -80,7 +83,12 @@ export function AppSidebar() {
     ];
 
     return (
-        <aside className="flex h-full w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+        <aside
+            className={cn(
+                'flex h-full w-full flex-col bg-sidebar text-sidebar-foreground',
+                rtl ? 'border-l border-sidebar-border' : 'border-r border-sidebar-border',
+            )}
+        >
             <div className="border-b border-sidebar-border p-4">
                 <Link href={link('')}>
                     <AppLogo />
@@ -100,8 +108,10 @@ export function AppSidebar() {
                                     <li key={item.href}>
                                         <Link
                                             href={item.href}
+                                            onClick={onNavigate}
                                             className={cn(
-                                                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                                                'sidebar-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                                                rtl && 'flex-row-reverse',
                                                 isActive(item.href)
                                                     ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm'
                                                     : 'text-sidebar-foreground hover:bg-sidebar-accent',

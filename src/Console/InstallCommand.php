@@ -31,6 +31,7 @@ class InstallCommand extends Command
         $this->wireViteConfig();
         $this->wireAppCss();
         $this->patchHostHomeRoute();
+        $this->wireRoutesIndexExport();
         $this->setDefaultEnv();
 
         if (! $this->option('no-migrate')) {
@@ -139,8 +140,10 @@ class InstallCommand extends Command
                 ? "'resources/css/greeate-inertia.css'"
                 : "'resources/css/greeate.css', 'resources/js/greeate.js'";
 
-            if ($ui === 'blade' && File::exists(resource_path('css/greeate-rtl.css'))) {
-                $entries .= ", 'resources/css/greeate-rtl.css'";
+            if (File::exists(resource_path('css/greeate-rtl.css')) && ($ui === 'blade' || $ui === 'inertia')) {
+                if ($ui === 'blade') {
+                    $entries .= ", 'resources/css/greeate-rtl.css'";
+                }
             }
 
             if (str_contains($content, 'greeate-inertia.css') || str_contains($content, 'greeate.css')) {
@@ -332,6 +335,23 @@ class InstallCommand extends Command
             if (! str_contains($content, 'greeate-inertia.css')) {
                 File::put($appCss, "@import './greeate-inertia.css';\n\n".$content);
             }
+        });
+    }
+
+    protected function wireRoutesIndexExport(): void
+    {
+        $this->components->task('Wiring routes/index.ts Greeate exports', function () {
+            $path = resource_path('js/routes/index.ts');
+            if (! File::exists($path)) {
+                return;
+            }
+
+            $content = File::get($path);
+            if (str_contains($content, "from './greeate'")) {
+                return;
+            }
+
+            File::append($path, "\n// Greeate public routes\nexport { home } from './greeate'\n");
         });
     }
 

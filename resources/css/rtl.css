@@ -60,3 +60,25 @@ html[dir='rtl'] .text-right {
 html[dir='rtl'] .icon-flip-rtl {
     transform: rotate(180deg);
 }
+
+/* Inertia / Tailwind admin */
+html[dir='rtl'] .greeate-header {
+    flex-direction: row-reverse;
+}
+html[dir='rtl'] .greeate-sidebar .sidebar-link {
+    flex-direction: row-reverse;
+}
+html[dir='rtl'] .greeate-admin .data-table th,
+html[dir='rtl'] .greeate-admin .data-table td {
+    text-align: right;
+}
+html[dir='rtl'] .greeate-admin input:not([type='color']),
+html[dir='rtl'] .greeate-admin textarea,
+html[dir='rtl'] .greeate-admin select {
+    text-align: right;
+}
+html[dir='rtl'] .greeate-admin [dir='ltr'] input,
+html[dir='rtl'] .greeate-admin [dir='ltr'] textarea {
+    text-align: left;
+    direction: ltr;
+}

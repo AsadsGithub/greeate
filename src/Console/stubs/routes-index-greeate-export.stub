@@ -1,0 +1,3 @@
+
+// Greeate public routes — re-export after `php artisan wayfinder:generate` if this block is removed
+export { home } from './greeate'

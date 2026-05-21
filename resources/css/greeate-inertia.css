@@ -35,6 +35,8 @@
     --primary-gradient-start: #a8b5ff;
     --primary-gradient-end: #6b46c1;
     --auth-gradient: linear-gradient(135deg, #a8b5ff 0%, #8b7fd9 50%, #6b46c1 100%);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.25 0.02 280);
 }
 
 .dark {
@@ -52,4 +54,8 @@
     --sidebar: oklch(0.22 0.02 280);
     --sidebar-foreground: oklch(0.95 0.01 280);
     --sidebar-border: oklch(0.3 0.02 285);
+    --popover: oklch(0.22 0.02 280);
+    --popover-foreground: oklch(0.95 0.01 280);
 }
+
+@import './rtl.css';

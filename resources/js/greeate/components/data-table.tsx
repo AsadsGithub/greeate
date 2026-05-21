@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { useGreeateRTL } from '../hooks/use-greeate-rtl';
 import { cn } from '../lib/utils';
 
 export type Column = {
@@ -47,18 +48,22 @@ export function DataTable<T extends Record<string, unknown>>({
     canDelete = true,
     onDelete,
 }: Props<T>) {
+    const { isRTL, textAlign } = useGreeateRTL();
+
     return (
-        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+        <div className="data-table overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                     <thead className="border-b border-border bg-muted/40">
                         <tr>
                             {columns.map((col) => (
-                                <th key={col.key} className="px-4 py-3 text-left font-medium text-muted-foreground">
+                                <th key={col.key} className={cn('px-4 py-3 font-medium text-muted-foreground', textAlign)}>
                                     {col.label}
                                 </th>
                             ))}
-                            <th className="px-4 py-3 text-right font-medium text-muted-foreground">Actions</th>
+                            <th className={cn('px-4 py-3 font-medium text-muted-foreground', isRTL ? 'text-left' : 'text-right')}>
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody>

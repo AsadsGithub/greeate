@@ -6,6 +6,7 @@ use Closure;
 use Greeate\Greeate\Models\Admin;
 use Greeate\Greeate\Services\NotificationService;
 use Greeate\Greeate\Services\SiteSettingsService;
+use Greeate\Greeate\Services\TranslationService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,10 +26,24 @@ class ShareGreeateInertiaProps
     {
         $user = $request->user();
         $siteSettings = app(SiteSettingsService::class)->getByGroup('general');
+        $translation = app(TranslationService::class);
 
         return [
             'locale' => app()->getLocale(),
             'rtl' => greeate_is_rtl(),
+            'activeLanguages' => $translation->getActiveLanguages()->map(fn ($lang) => [
+                'code' => $lang->code,
+                'name' => $lang->name,
+                'direction' => $lang->direction,
+                'is_default' => (bool) $lang->is_default,
+            ])->values()->all(),
+            'settingsGroups' => collect(app(SiteSettingsService::class)->getAvailableGroups())
+                ->map(fn (string $group) => [
+                    'key' => $group,
+                    'label' => __("greeate::settings.group_{$group}", [], app()->getLocale()),
+                ])
+                ->values()
+                ->all(),
             'translations' => array_merge(
                 __('greeate::nav'),
                 __('greeate::auth'),
@@ -36,6 +51,7 @@ class ShareGreeateInertiaProps
                 __('greeate::messages'),
                 __('greeate::fields'),
                 __('greeate::stats'),
+                __('greeate::settings'),
             ),
             'siteSettings' => $siteSettings,
             'auth' => [

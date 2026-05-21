@@ -14,7 +14,14 @@ class SiteSettingsController extends BaseController
     {
         return $this->greeatePage('greeate/admin/settings/index', [
             'group' => $group,
-            'settings' => $this->settings->getByGroup($group),
+            'settings' => $this->settings->getSettingsForGroup($group),
+            'groups' => collect($this->settings->getAvailableGroups())
+                ->map(fn (string $g) => [
+                    'key' => $g,
+                    'label' => __("greeate::settings.group_{$g}"),
+                ])
+                ->values()
+                ->all(),
         ]);
     }
 
