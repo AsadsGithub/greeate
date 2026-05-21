@@ -27,6 +27,8 @@ class InstallCommand extends Command
         $this->publishViews();
         $this->publishLang();
         $this->publishAssets();
+        $this->publishViteResources();
+        $this->wireViteConfig();
 
         if (! $this->option('no-migrate')) {
             $this->runMigrations();
@@ -41,12 +43,16 @@ class InstallCommand extends Command
         $this->setupBroadcasting();
         $this->setupFirebase();
         $this->installNpmDependencies();
+        $this->buildAssets();
 
         $this->newLine();
         $this->components->info('Greeate installed successfully!');
         $this->line('Admin URL: /'.config('greeate.admin_prefix', 'admin'));
+        $this->line('Login URL: /login');
         $this->line('Default admin: '.config('greeate.default_admin.email'));
         $this->line('Default password: '.config('greeate.default_admin.password'));
+        $this->newLine();
+        $this->components->warn('Run: npm run build  (or npm run dev) so Greeate CSS/JS load in the admin panel.');
 
         return self::SUCCESS;
     }
@@ -98,6 +104,73 @@ class InstallCommand extends Command
                 '--tag' => 'greeate-assets',
                 '--force' => $this->option('force'),
             ]);
+        });
+    }
+
+    protected function publishViteResources(): void
+    {
+        $this->components->task('Publishing Vite resources (css/js)', function () {
+            $this->callSilent('vendor:publish', [
+                '--tag' => 'greeate-vite',
+                '--force' => $this->option('force'),
+            ]);
+        });
+    }
+
+    protected function wireViteConfig(): void
+    {
+        $this->components->task('Wiring Vite config', function () {
+            $viteTs = base_path('vite.config.ts');
+            $viteJs = base_path('vite.config.js');
+            $vitePath = File::exists($viteTs) ? $viteTs : (File::exists($viteJs) ? $viteJs : null);
+
+            if (! $vitePath) {
+                return;
+            }
+
+            $content = File::get($vitePath);
+            $entries = "'resources/css/greeate.css', 'resources/js/greeate.js'";
+            if (File::exists(resource_path('css/greeate-rtl.css'))) {
+                $entries .= ", 'resources/css/greeate-rtl.css'";
+            }
+
+            if (str_contains($content, 'greeate.css')) {
+                if (! str_contains($content, 'greeate-rtl.css') && str_contains($entries, 'greeate-rtl')) {
+                    if (preg_match("/input:\s*\[([^\]]+)\]/", $content, $matches)) {
+                        $input = rtrim($matches[1]);
+                        $replacement = "input: [{$input}, 'resources/css/greeate-rtl.css']";
+                        $content = preg_replace("/input:\s*\[[^\]]+\]/", $replacement, $content, 1);
+                        File::put($vitePath, $content);
+                    }
+                }
+
+                return;
+            }
+
+            if (preg_match("/input:\s*\[([^\]]+)\]/", $content, $matches)) {
+                $input = rtrim($matches[1]);
+                $replacement = "input: [{$input}, {$entries}]";
+                $content = preg_replace("/input:\s*\[[^\]]+\]/", $replacement, $content, 1);
+                File::put($vitePath, $content);
+            }
+        });
+    }
+
+    protected function buildAssets(): void
+    {
+        if ($this->option('no-assets')) {
+            return;
+        }
+
+        if (! File::exists(base_path('package.json'))) {
+            return;
+        }
+
+        $this->components->task('Building frontend assets', function () {
+            $result = Process::path(base_path())->run('npm run build');
+            if (! $result->successful()) {
+                $this->components->warn('npm run build failed. Run it manually after install.');
+            }
         });
     }
 

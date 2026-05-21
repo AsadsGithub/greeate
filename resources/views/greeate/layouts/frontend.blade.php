@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ greeate_direction() }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+      dir="{{ greeate_direction() }}"
+      x-data="{ darkMode: localStorage.getItem('greeate-dark') === 'true' }"
+      :class="{ 'dark': darkMode }">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', greeate_setting('meta_title', 'Greeate'))</title>
+    <title>@yield('title', greeate_setting('meta_title', greeate_setting('site_name', 'Greeate')))</title>
     <meta name="description" content="{{ greeate_setting('meta_description', '') }}">
-    @vite(['resources/css/greeate.css', 'resources/js/greeate.js'])
+    @include('greeate::layouts.partials.head')
+    @stack('styles')
 </head>
-<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+<body class="min-h-screen bg-background text-foreground antialiased">
     @include('greeate::components.frontend-nav')
     <main>@yield('content')</main>
     @include('greeate::components.frontend-footer')
+    @include('greeate::components.toast')
+    @stack('scripts')
 </body>
 </html>

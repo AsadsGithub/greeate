@@ -15,4 +15,7 @@ return [
     'logged_out' => 'Logged out successfully.',
     'welcome_back' => 'Welcome back! Here is what is happening today.',
     'contact_sent' => 'Your message has been sent successfully.',
+    'cannot_modify_super_admin' => 'You cannot modify this super admin account.',
+    'broadcast_sent' => 'Broadcast sent successfully.',
+    'too_many_attempts' => 'Too many attempts. Please try again later.',
 ];

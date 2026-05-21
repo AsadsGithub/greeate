@@ -1,20 +1,30 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ greeate_direction() }}" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true', sidebarOpen: true }" :class="{ 'dark': darkMode }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+      dir="{{ greeate_direction() }}"
+      x-data="greeateAdmin()"
+      :class="{ 'dark': darkMode }"
+      x-cloak>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', config('greeate.name')) - Admin</title>
-    @vite(['resources/css/greeate.css', 'resources/js/greeate.js'])
+    <title>@yield('title', __('greeate::nav.dashboard')) - {{ greeate_setting('site_name', config('greeate.name')) }}</title>
+    @include('greeate::layouts.partials.head')
     @stack('styles')
 </head>
-<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased" x-cloak>
-    <div class="flex min-h-screen">
+<body class="bg-background text-foreground"
+      data-user-id="{{ auth()->id() }}"
+      data-enable-web-push="{{ config('greeate.features.web_push') ? 'true' : 'false' }}">
+    <div class="greeate-shell">
+        <div x-show="mobileSidebar" x-transition class="greeate-sidebar-backdrop lg:hidden" @click="mobileSidebar = false"></div>
+
         @include('greeate::components.sidebar')
-        <div class="flex-1 flex flex-col min-w-0">
+
+        <div class="greeate-main">
             @include('greeate::components.topbar')
-            <main class="flex-1 p-6 overflow-auto">
-                @include('greeate::components.breadcrumbs')
+            <main class="greeate-content">
+                @hasSection('breadcrumbs')
+                    @yield('breadcrumbs')
+                @else
+                    @include('greeate::components.breadcrumbs')
+                @endif
                 @include('greeate::components.alerts')
                 @yield('content')
             </main>

@@ -4,6 +4,9 @@ return [
     'name' => 'Greeate',
     'version' => '1.0.0',
 
+    // Set false when host app uses Inertia/React on / (Laravel React starter kit).
+    'load_frontend_routes' => env('GREEATE_LOAD_FRONTEND_ROUTES', true),
+
     'route_prefix' => env('GREEATE_ROUTE_PREFIX', 'greeate'),
     'admin_prefix' => env('GREEATE_ADMIN_PREFIX', 'admin'),
     'api_prefix' => env('GREEATE_API_PREFIX', 'api/v1'),
@@ -71,5 +74,16 @@ return [
         'login' => '5,1',
         'api' => '60,1',
         'contact' => '10,1',
+    ],
+
+    'auth' => [
+        'register_enabled' => env('GREEATE_REGISTER_ENABLED', false),
+    ],
+
+    'features' => [
+        'two_factor' => env('GREEATE_2FA_ENABLED', true),
+        'web_push' => env('GREEATE_WEB_PUSH_ENABLED', false),
+        'broadcasts' => env('GREEATE_BROADCASTS_ENABLED', true),
+        'activity_log' => env('GREEATE_ACTIVITY_LOG_ENABLED', true),
     ],
 ];

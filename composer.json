@@ -53,7 +53,9 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Greeate\\Greeate\\GreeateServiceProvider"
+                "Greeate\\Greeate\\GreeateServiceProvider",
+                "Greeate\\Greeate\\GreeateAuthServiceProvider",
+                "Greeate\\Greeate\\FirebaseServiceProvider"
             ],
             "aliases": {
                 "Greeate": "Greeate\\Greeate\\Facades\\Greeate"

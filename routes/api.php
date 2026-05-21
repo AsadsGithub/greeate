@@ -2,6 +2,7 @@
 
 use Greeate\Greeate\Http\Controllers\Api\V1\AdminController as ApiAdminController;
 use Greeate\Greeate\Http\Controllers\Api\V1\AuthController;
+use Greeate\Greeate\Http\Controllers\Api\V1\DeviceTokenController;
 use Greeate\Greeate\Http\Controllers\Api\V1\NotificationController as ApiNotificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,5 +17,6 @@ Route::prefix($prefix)->name('greeate.api.')->group(function () {
         Route::apiResource('admins', ApiAdminController::class);
         Route::get('notifications', [ApiNotificationController::class, 'index'])->name('notifications.index');
         Route::patch('notifications/{id}/read', [ApiNotificationController::class, 'markAsRead'])->name('notifications.read');
+        Route::post('device-tokens', [DeviceTokenController::class, 'store'])->name('device-tokens.store');
     });
 });

@@ -1,16 +1,16 @@
-<nav class="border-b border-gray-200 dark:border-gray-800">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <a href="{{ route('greeate.home') }}" class="text-xl font-bold text-indigo-600">{{ greeate_setting('site_name', 'Greeate') }}</a>
-        <div class="flex items-center gap-6 text-sm">
-            <a href="{{ route('greeate.home') }}">Home</a>
-            <a href="{{ route('greeate.contact') }}">Contact</a>
-            <a href="{{ route('greeate.page', 'privacy-policy') }}">Privacy</a>
-            <a href="{{ route('greeate.login') }}">Login</a>
-            @foreach(app(\Greeate\Greeate\Services\TranslationService::class)->getActiveLanguages() as $lang)
-            <form method="POST" action="{{ route('greeate.language.switch', $lang->code) }}" class="inline">@csrf
-                <button type="submit" class="{{ app()->getLocale() === $lang->code ? 'font-bold text-indigo-600' : '' }}">{{ $lang->code }}</button>
-            </form>
-            @endforeach
+<header class="sticky top-0 z-30 border-b border-border bg-card/80 backdrop-blur-md">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+        <a href="{{ route('greeate.home') }}" class="flex items-center gap-3">
+            @include('greeate::components.logo')
+        </a>
+        <nav class="hidden items-center gap-6 text-sm font-medium md:flex">
+            <a href="{{ route('greeate.home') }}" class="text-muted-foreground hover:text-primary">{{ __('greeate::nav.home') }}</a>
+            <a href="{{ route('greeate.contact') }}" class="text-muted-foreground hover:text-primary">{{ __('greeate::nav.contact') }}</a>
+            <a href="{{ route('greeate.page', 'privacy-policy') }}" class="text-muted-foreground hover:text-primary">{{ __('greeate::nav.privacy') }}</a>
+        </nav>
+        <div class="flex items-center gap-3">
+            @include('greeate::components.language-switcher')
+            <a href="{{ route('greeate.login') }}" class="btn-primary btn-sm">{{ __('greeate::auth.log_in') }}</a>
         </div>
     </div>
-</nav>
+</header>

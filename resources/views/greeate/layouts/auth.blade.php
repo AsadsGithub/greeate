@@ -1,15 +1,30 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ greeate_direction() }}" x-data="{ darkMode: false }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+      dir="{{ greeate_direction() }}"
+      x-data="{ darkMode: localStorage.getItem('greeate-dark') === 'true' }"
+      :class="{ 'dark': darkMode }"
+      x-cloak>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Auth') - {{ greeate_setting('site_name', 'Greeate') }}</title>
-    @vite(['resources/css/greeate.css', 'resources/js/greeate.js'])
+    <title>@yield('title', __('greeate::auth.log_in')) - {{ greeate_setting('site_name', config('greeate.name')) }}</title>
+    @include('greeate::layouts.partials.head')
+    @stack('styles')
 </head>
-<body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
-        @yield('content')
+<body class="min-h-screen bg-auth-gradient antialiased">
+    {{-- Top bar: logo + language --}}
+    <div class="fixed top-0 left-0 right-0 z-20 flex items-center justify-between p-6">
+        <a href="{{ route('greeate.home') }}" class="flex items-center gap-3 {{ greeate_is_rtl() ? 'flex-row-reverse' : '' }}">
+            @include('greeate::components.logo', ['variant' => 'auth'])
+        </a>
+        @include('greeate::components.language-switcher', ['variant' => 'auth'])
     </div>
+
+    <div class="flex min-h-screen items-center justify-center p-6 pt-24">
+        <div class="w-full max-w-md">
+            @yield('content')
+        </div>
+    </div>
+
+    @include('greeate::components.toast')
+    @stack('scripts')
 </body>
 </html>

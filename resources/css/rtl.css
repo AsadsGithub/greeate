@@ -1,0 +1,62 @@
+/* RTL overrides — load after greeate.css */
+
+html[dir='rtl'] {
+    direction: rtl;
+}
+html[dir='rtl'] body {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir='rtl'] .greeate-sidebar {
+    left: auto;
+    right: 0;
+    border-right: none;
+    border-left: 1px solid var(--sidebar-border);
+}
+html[dir='rtl'] .sidebar-link {
+    flex-direction: row-reverse;
+}
+html[dir='rtl'] .sidebar-link svg {
+    margin-left: 0.75rem;
+    margin-right: 0;
+}
+html[dir='rtl'] .greeate-header {
+    flex-direction: row-reverse;
+}
+html[dir='rtl'] .data-table th,
+html[dir='rtl'] .data-table td {
+    text-align: right;
+}
+html[dir='rtl'] .form-input,
+html[dir='rtl'] .auth-input {
+    text-align: right;
+    direction: rtl;
+}
+html[dir='rtl'] .auth-label,
+html[dir='rtl'] .form-label {
+    text-align: right;
+}
+html[dir='rtl'] .breadcrumb-nav {
+    flex-direction: row-reverse;
+}
+html[dir='rtl'] .page-actions {
+    flex-direction: row-reverse;
+}
+html[dir='rtl'] .ml-auto {
+    margin-left: 0;
+    margin-right: auto;
+}
+html[dir='rtl'] .mr-auto {
+    margin-right: 0;
+    margin-left: auto;
+}
+html[dir='rtl'] .text-left {
+    text-align: right;
+}
+html[dir='rtl'] .text-right {
+    text-align: left;
+}
+html[dir='rtl'] .icon-flip-rtl {
+    transform: rotate(180deg);
+}

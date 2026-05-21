@@ -2,7 +2,7 @@
 
 namespace Greeate\Greeate\Models;
 
-use Greeate\Greeate\Traits\LogsActivityTrait;
+use Greeate\Greeate\Traits\LogsActivity;
 use Greeate\Greeate\Database\Factories\AdminFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasRoles, LogsActivityTrait, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasRoles, LogsActivity, Notifiable, SoftDeletes;
 
     protected $table = 'greeate_admins';
 

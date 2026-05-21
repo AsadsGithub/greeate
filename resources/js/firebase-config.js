@@ -1,0 +1,1 @@
+window.GREEATE_FIREBASE = window.FIREBASE_CONFIG || {};

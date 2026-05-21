@@ -2,13 +2,13 @@
 
 namespace Greeate\Greeate\Models;
 
-use Greeate\Greeate\Traits\LogsActivityTrait;
+use Greeate\Greeate\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ContactMessage extends Model
 {
-    use LogsActivityTrait, SoftDeletes;
+    use LogsActivity, SoftDeletes;
 
     protected $table = 'greeate_contact_messages';
 

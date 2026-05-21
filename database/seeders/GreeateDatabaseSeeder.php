@@ -12,7 +12,7 @@ class GreeateDatabaseSeeder extends Seeder
             PermissionSeeder::class,
             LanguageSeeder::class,
             SiteSettingSeeder::class,
-            AdminSeeder::class,
+            SuperAdminSeeder::class,
             StaticPageSeeder::class,
         ]);
     }

@@ -2,13 +2,13 @@
 
 namespace Greeate\Greeate\Models;
 
-use Greeate\Greeate\Traits\LogsActivityTrait;
+use Greeate\Greeate\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 class SiteSetting extends Model
 {
-    use LogsActivityTrait;
+    use LogsActivity;
 
     protected $table = 'greeate_site_settings';
 
