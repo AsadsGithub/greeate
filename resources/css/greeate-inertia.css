@@ -1,0 +1,13 @@
+/**
+ * Greeate Inertia/React theme — import from host app.css:
+ * @import './greeate-inertia.css';
+ */
+@source '../js/pages/greeate/**/*.tsx';
+@source '../js/greeate/**/*.tsx';
+@source '../../vendor/greeate/greeate/resources/js/pages/greeate/**/*.tsx';
+@source '../../vendor/greeate/greeate/resources/js/greeate/**/*.tsx';
+
+:root {
+    --primary-gradient-start: #a8b5ff;
+    --primary-gradient-end: #6b46c1;
+}

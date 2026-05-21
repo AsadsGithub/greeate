@@ -16,7 +16,10 @@ class LoginController extends BaseController
 
     public function index()
     {
-        return view('greeate::auth.login');
+        return $this->greeatePage('greeate/auth/login', [
+            'canResetPassword' => true,
+            'status' => session('status'),
+        ]);
     }
 
     public function store(Request $request)

@@ -7,7 +7,7 @@ use Greeate\Greeate\Http\Controllers\Auth\ResetPasswordController;
 use Greeate\Greeate\Http\Controllers\Auth\VerificationController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'greeate.locale'])->group(function () {
+Route::middleware('greeate.auth')->group(function () {
     Route::get('login', [LoginController::class, 'index'])->name('greeate.login');
     Route::post('login', [LoginController::class, 'store'])->name('greeate.login.store');
     Route::post('logout', [LoginController::class, 'destroy'])->name('greeate.logout');

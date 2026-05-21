@@ -13,7 +13,7 @@ class ProfileController extends BaseController
 
     public function edit()
     {
-        return view('greeate::admin.profile.edit', ['admin' => auth()->user()]);
+        return $this->greeatePage('greeate/admin/profile/edit', ['admin' => auth()->user()]);
     }
 
     public function update(Request $request)

@@ -1,21 +1,34 @@
 # Greeate Installation Guide
 
-## Fresh Laravel 12 (Blade host)
+Greeate defaults to **Laravel + React + Inertia** (clinic_backend style). Blade/Alpine remains available with `GREEATE_UI=blade`.
+
+---
+
+## Laravel 12 React / Inertia host (recommended)
+
+### 1. Composer
 
 ```bash
 composer require greeate/greeate
-composer require spatie/laravel-permission spatie/laravel-activitylog laravel/sanctum
+composer require spatie/laravel-permission spatie/laravel-activitylog laravel/sanctum inertiajs/inertia-laravel
 
 php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
 php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
 php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
-
-php artisan greeate:install
-npm install alpinejs @tailwindcss/forms tailwindcss vite laravel-vite-plugin --save-dev
-npm run build
 ```
 
-### Auth (`config/auth.php`)
+### 2. Environment (`.env`)
+
+```env
+GREEATE_UI=inertia
+GREEATE_LOAD_FRONTEND_ROUTES=false
+```
+
+- Host Inertia app stays on `/` (welcome, settings, etc.)
+- Greeate admin: `/admin`
+- Greeate login: `/login`
+
+### 3. Auth (`config/auth.php`)
 
 ```php
 'defaults' => ['guard' => 'web', 'passwords' => 'users'],
@@ -27,53 +40,100 @@ npm run build
 ],
 ```
 
-### Middleware (`bootstrap/app.php`)
+### 4. Middleware (`bootstrap/app.php`)
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
-    $middleware->web(append: [
-        \Greeate\Greeate\Http\Middleware\SetLocale::class,
-        \Greeate\Greeate\Http\Middleware\CheckMaintenanceMode::class,
-    ]);
-})
+$middleware->web(append: [
+    \Greeate\Greeate\Http\Middleware\SetLocale::class,
+    \Greeate\Greeate\Http\Middleware\CheckMaintenanceMode::class,
+    // Host HandleInertiaRequests stays — Greeate adds ShareGreeateInertiaProps on its routes
+]);
 ```
 
-### Vite (`vite.config.js`)
+Guest redirect for admin:
 
-Ensure inputs include:
-
-```js
-'resources/css/greeate.css',
-'resources/js/greeate.js',
+```php
+$middleware->redirectGuestsTo(function (Request $request) {
+    $adminPrefix = trim(config('greeate.admin_prefix', 'admin'), '/');
+    if ($request->is($adminPrefix) || $request->is($adminPrefix.'/*')) {
+        return route('greeate.login');
+    }
+    return route('login');
+});
 ```
 
-The installer publishes `greeate.tailwind4.css` as `resources/css/greeate.css` for Tailwind v4 hosts.
+### 5. Install
+
+```bash
+php artisan greeate:install --force
+npm install lucide-react clsx tailwind-merge
+npm run build
+```
+
+Installer publishes:
+
+- `resources/js/pages/greeate/**` — Inertia pages
+- `resources/js/greeate/**` — layouts, components, hooks
+- `resources/css/greeate-inertia.css` — Tailwind sources
+
+### 6. Host `resources/css/app.css`
+
+Add:
+
+```css
+@import './greeate-inertia.css';
+```
+
+### 7. Host `resources/js/app.tsx`
+
+Greeate pages include their own layout. Ensure Inertia resolves `greeate/*` pages (Laravel Vite plugin does this when files exist under `resources/js/pages/greeate/`).
+
+Optional layout hook:
+
+```tsx
+layout: (name) => {
+    if (name.startsWith('greeate/')) return null; // GreeateAppLayout is inside each page
+    // ... your existing layout rules
+},
+```
+
+### 8. Verify
+
+| URL | Expected |
+|-----|----------|
+| `/login` | Purple gradient React login |
+| `/admin` | React sidebar + dashboard |
+| Login | `admin@greeate.com` / `password` |
 
 ---
 
-## Laravel 12 React / Inertia host
+## Blade-only host (legacy)
 
 ```env
-GREEATE_LOAD_FRONTEND_ROUTES=false
+GREEATE_UI=blade
+GREEATE_LOAD_FRONTEND_ROUTES=true
 ```
 
-Keep your Inertia routes on `/`. Use Greeate at:
-
-- `/login` — admin auth
-- `/admin` — Blade admin panel
-
-Merge `vite.config.ts`:
-
-```ts
-input: [
-    'resources/css/app.css',
-    'resources/js/app.tsx',
-    'resources/css/greeate.css',
-    'resources/js/greeate.js',
-],
+```bash
+php artisan greeate:install --force
+npm install alpinejs --save-dev
+npm run build
 ```
 
-Run `npm run build` after install.
+Vite inputs: `resources/css/greeate.css`, `resources/js/greeate.js`
+
+---
+
+## Uninstall / reinstall (Inertia host)
+
+See prompt in chat or run:
+
+```bash
+# Roll back greeate migrations, remove published files, composer remove greeate/greeate
+composer require greeate/greeate
+php artisan greeate:install --force
+npm run build
+```
 
 ---
 

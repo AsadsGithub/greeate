@@ -12,14 +12,14 @@ class DashboardController extends BaseController
 {
     public function index()
     {
-        return view('greeate::admin.dashboard', [
-            'stats' => [
-                'admins' => Admin::count(),
-                'contacts' => ContactMessage::where('status', 'new')->count(),
-                'notifications' => GreeateNotification::whereNull('read_at')->count(),
-                'activities' => Activity::latest()->limit(10)->get(),
-                'recent_contacts' => ContactMessage::latest()->limit(5)->get(),
-            ],
-        ]);
+        $stats = [
+            'admins' => Admin::count(),
+            'contacts' => ContactMessage::where('status', 'new')->count(),
+            'notifications' => GreeateNotification::whereNull('read_at')->count(),
+            'activities' => Activity::latest()->limit(10)->get(),
+            'recent_contacts' => ContactMessage::latest()->limit(5)->get(),
+        ];
+
+        return $this->greeatePage('greeate/admin/dashboard', compact('stats'));
     }
 }

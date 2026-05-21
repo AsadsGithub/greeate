@@ -28,7 +28,12 @@
         "laravel/sanctum": "^4.0",
         "spatie/laravel-permission": "^6.0",
         "spatie/laravel-activitylog": "^4.0",
-        "kreait/laravel-firebase": "^5.0"
+        "kreait/laravel-firebase": "^5.0",
+        "inertiajs/inertia-laravel": "^2.0"
+    },
+    "suggest": {
+        "inertiajs/inertia-laravel": "Required for React/Inertia admin UI (GREEATE_UI=inertia)",
+        "@inertiajs/react": "Install via npm in the host app for Greeate Inertia pages"
     },
     "require-dev": {
         "orchestra/testbench": "^10.0",

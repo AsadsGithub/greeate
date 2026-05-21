@@ -9,6 +9,6 @@ class ForgotPasswordController extends BaseController
 {
     public function index()
     {
-        return view('greeate::auth.forgotpassword');
+        return $this->greeatePage('greeate/auth/forgot-password');
     }
 }

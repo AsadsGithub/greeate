@@ -12,7 +12,7 @@ class SiteSettingsController extends BaseController
 
     public function index(string $group = 'general')
     {
-        return view('greeate::admin.settings.index', [
+        return $this->greeatePage('greeate/admin/settings/index', [
             'group' => $group,
             'settings' => $this->settings->getByGroup($group),
         ]);

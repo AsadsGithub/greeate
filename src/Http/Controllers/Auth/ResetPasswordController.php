@@ -9,6 +9,6 @@ class ResetPasswordController extends BaseController
 {
     public function index()
     {
-        return view('greeate::auth.resetpassword');
+        return $this->greeatePage('greeate/auth/reset-password');
     }
 }

@@ -22,7 +22,7 @@ class ActivityLogController extends BaseController
 
         $logs = $query->paginate($request->integer('per_page', 20));
 
-        return view('greeate::admin.activity-logs.index', compact('logs'));
+        return $this->greeatePage('greeate/admin/activity-logs/index', compact('logs'));
     }
 
     public function destroy(int $id)

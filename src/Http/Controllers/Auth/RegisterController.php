@@ -9,6 +9,6 @@ class RegisterController extends BaseController
 {
     public function index()
     {
-        return view('greeate::auth.register');
+        return $this->greeatePage('greeate/auth/register');
     }
 }

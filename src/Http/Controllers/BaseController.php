@@ -2,6 +2,7 @@
 
 namespace Greeate\Greeate\Http\Controllers;
 
+use Greeate\Greeate\Traits\RendersGreeateUi;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller;
@@ -10,7 +11,7 @@ use Throwable;
 
 abstract class BaseController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
+    use AuthorizesRequests, RendersGreeateUi, ValidatesRequests;
 
     protected function withTransaction(callable $callback): mixed
     {

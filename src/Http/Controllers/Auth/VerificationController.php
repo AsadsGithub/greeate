@@ -9,6 +9,6 @@ class VerificationController extends BaseController
 {
     public function index()
     {
-        return view('greeate::auth.verification');
+        return $this->greeatePage('greeate/auth/verify-email');
     }
 }

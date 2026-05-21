@@ -29,6 +29,8 @@ class InstallCommand extends Command
         $this->publishAssets();
         $this->publishViteResources();
         $this->wireViteConfig();
+        $this->wireAppCss();
+        $this->setDefaultEnv();
 
         if (! $this->option('no-migrate')) {
             $this->runMigrations();
@@ -129,12 +131,16 @@ class InstallCommand extends Command
             }
 
             $content = File::get($vitePath);
-            $entries = "'resources/css/greeate.css', 'resources/js/greeate.js'";
-            if (File::exists(resource_path('css/greeate-rtl.css'))) {
+            $ui = config('greeate.ui', 'inertia');
+            $entries = $ui === 'inertia'
+                ? "'resources/css/greeate-inertia.css'"
+                : "'resources/css/greeate.css', 'resources/js/greeate.js'";
+
+            if ($ui === 'blade' && File::exists(resource_path('css/greeate-rtl.css'))) {
                 $entries .= ", 'resources/css/greeate-rtl.css'";
             }
 
-            if (str_contains($content, 'greeate.css')) {
+            if (str_contains($content, 'greeate-inertia.css') || str_contains($content, 'greeate.css')) {
                 if (! str_contains($content, 'greeate-rtl.css') && str_contains($entries, 'greeate-rtl')) {
                     if (preg_match("/input:\s*\[([^\]]+)\]/", $content, $matches)) {
                         $input = rtrim($matches[1]);
@@ -267,7 +273,49 @@ class InstallCommand extends Command
         }
 
         $this->components->task('Installing npm dependencies', function () {
-            Process::path(base_path())->run('npm install alpinejs chart.js --save-dev');
+            $ui = config('greeate.ui', 'inertia');
+            $packages = $ui === 'inertia'
+                ? 'lucide-react clsx tailwind-merge'
+                : 'alpinejs chart.js';
+            Process::path(base_path())->run("npm install {$packages} --save-dev");
         });
+    }
+
+    protected function wireAppCss(): void
+    {
+        if (config('greeate.ui', 'inertia') !== 'inertia') {
+            return;
+        }
+
+        $this->components->task('Wiring app.css for Greeate Inertia', function () {
+            $appCss = resource_path('css/app.css');
+            if (! File::exists($appCss)) {
+                return;
+            }
+            $content = File::get($appCss);
+            if (! str_contains($content, 'greeate-inertia.css')) {
+                File::put($appCss, "@import './greeate-inertia.css';\n\n".$content);
+            }
+        });
+    }
+
+    protected function setDefaultEnv(): void
+    {
+        $envPath = base_path('.env');
+        if (! File::exists($envPath)) {
+            return;
+        }
+
+        $content = File::get($envPath);
+        $vars = [
+            'GREEATE_UI' => 'inertia',
+            'GREEATE_LOAD_FRONTEND_ROUTES' => 'false',
+        ];
+
+        foreach ($vars as $key => $value) {
+            if (! str_contains($content, $key)) {
+                File::append($envPath, "\n{$key}={$value}");
+            }
+        }
     }
 }

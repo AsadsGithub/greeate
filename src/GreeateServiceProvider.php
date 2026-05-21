@@ -5,6 +5,7 @@ namespace Greeate\Greeate;
 use Greeate\Greeate\Console\InstallCommand;
 use Greeate\Greeate\Console\ProcessScheduledBroadcastsCommand;
 use Greeate\Greeate\Http\Middleware\CheckAdminPanelAccess;
+use Greeate\Greeate\Http\Middleware\ShareGreeateInertiaProps;
 use Greeate\Greeate\Http\Middleware\CheckMaintenanceMode;
 use Greeate\Greeate\Http\Middleware\CheckPermission;
 use Greeate\Greeate\Http\Middleware\RestrictSuperAdminEdit;
@@ -91,6 +92,9 @@ class GreeateServiceProvider extends ServiceProvider
         ], 'greeate-assets');
 
         $this->publishes([
+            __DIR__.'/../resources/js/pages/greeate' => resource_path('js/pages/greeate'),
+            __DIR__.'/../resources/js/greeate' => resource_path('js/greeate'),
+            __DIR__.'/../resources/css/greeate-inertia.css' => resource_path('css/greeate-inertia.css'),
             __DIR__.'/../resources/css/greeate.tailwind4.css' => resource_path('css/greeate.css'),
             __DIR__.'/../resources/css/rtl.css' => resource_path('css/greeate-rtl.css'),
             __DIR__.'/../resources/js/greeate.js' => resource_path('js/greeate.js'),
@@ -168,13 +172,23 @@ class GreeateServiceProvider extends ServiceProvider
         $router->aliasMiddleware('greeate.maintenance', CheckMaintenanceMode::class);
         $router->aliasMiddleware('greeate.admin', CheckAdminPanelAccess::class);
         $router->aliasMiddleware('greeate.super-admin.protect', RestrictSuperAdminEdit::class);
+        $router->aliasMiddleware('greeate.inertia', ShareGreeateInertiaProps::class);
 
-        $router->middlewareGroup('greeate.admin.panel', [
+        $inertiaMiddleware = config('greeate.ui', 'inertia') === 'inertia'
+            ? ['greeate.inertia']
+            : [];
+
+        $router->middlewareGroup('greeate.admin.panel', array_merge([
             'web',
             'greeate.locale',
             'auth:'.config('greeate.guard', 'web'),
             'greeate.admin',
-        ]);
+        ], $inertiaMiddleware));
+
+        $router->middlewareGroup('greeate.auth', array_merge([
+            'web',
+            'greeate.locale',
+        ], $inertiaMiddleware));
     }
 
     protected function registerBladeDirectives(): void

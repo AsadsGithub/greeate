@@ -4,6 +4,9 @@ return [
     'name' => 'Greeate',
     'version' => '1.0.0',
 
+    // UI driver: inertia (React) or blade (Alpine). Default inertia for Laravel React hosts.
+    'ui' => env('GREEATE_UI', 'inertia'),
+
     // Set false when host app uses Inertia/React on / (Laravel React starter kit).
     'load_frontend_routes' => env('GREEATE_LOAD_FRONTEND_ROUTES', true),
 

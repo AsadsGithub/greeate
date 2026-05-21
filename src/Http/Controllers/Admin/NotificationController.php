@@ -15,7 +15,7 @@ class NotificationController extends BaseController
             ->latest()
             ->paginate(20);
 
-        return view('greeate::admin.notifications.index', compact('notifications'));
+        return $this->greeatePage('greeate/admin/notifications/index', compact('notifications'));
     }
 
     public function markAsRead(int $id)

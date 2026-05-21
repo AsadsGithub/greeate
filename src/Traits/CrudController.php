@@ -2,12 +2,12 @@
 
 namespace Greeate\Greeate\Traits;
 
-use Greeate\Greeate\Contracts\BaseRepositoryInterface;
+use Greeate\Greeate\Support\GreeateUi;
 use Illuminate\Http\Request;
 
 trait CrudController
 {
-    abstract protected function getRepository(): BaseRepositoryInterface;
+    abstract protected function getRepository(): \Greeate\Greeate\Contracts\BaseRepositoryInterface;
 
     abstract protected function getResourceName(): string;
 
@@ -19,16 +19,18 @@ trait CrudController
     {
         $items = $this->getRepository()->paginate($request);
 
-        return view($this->getViewPrefix().'.index', [
+        return $this->renderCrud('index', [
             'items' => $items,
             'resource' => $this->getResourceName(),
+            'title' => __("greeate::nav.{$this->getResourceName()}"),
         ]);
     }
 
     public function create()
     {
-        return view($this->getViewPrefix().'.create', [
+        return $this->renderCrud('create', [
             'resource' => $this->getResourceName(),
+            'title' => __('greeate::actions.create').' '. __("greeate::nav.{$this->getResourceName()}"),
         ]);
     }
 
@@ -46,14 +48,21 @@ trait CrudController
     {
         $item = $this->getRepository()->findOrFail($id);
 
-        return view($this->getViewPrefix().'.show', compact('item'));
+        return $this->renderCrud('show', [
+            'item' => $item,
+            'resource' => $this->getResourceName(),
+        ]);
     }
 
     public function edit(int $id)
     {
         $item = $this->getRepository()->findOrFail($id);
 
-        return view($this->getViewPrefix().'.edit', compact('item'));
+        return $this->renderCrud('edit', [
+            'item' => $item,
+            'resource' => $this->getResourceName(),
+            'title' => __('greeate::actions.edit').' '. __("greeate::nav.{$this->getResourceName()}"),
+        ]);
     }
 
     public function update(Request $request, int $id)
@@ -80,6 +89,30 @@ trait CrudController
         $this->getRepository()->toggleStatus($id);
 
         return back()->with('success', __('greeate::messages.status_updated'));
+    }
+
+    protected function renderCrud(string $action, array $props = [])
+    {
+        if (GreeateUi::usesInertia()) {
+            $component = GreeateUi::inertiaComponentFromBladePrefix($this->getViewPrefix(), $action);
+
+            if ($action === 'index') {
+                $adminPrefix = trim(config('greeate.admin_prefix', 'admin'), '/');
+
+                return $this->greeatePage('greeate/admin/resource-index', array_merge($props, [
+                    'component' => $component,
+                    'routePrefix' => $this->getRoutePrefix(),
+                    'basePath' => '/'.$adminPrefix.'/'.str_replace('_', '-', $this->getResourceName()),
+                ]));
+            }
+
+            return $this->greeatePage('greeate/admin/resource-form', array_merge($props, [
+                'action' => $action,
+                'routePrefix' => $this->getRoutePrefix(),
+            ]));
+        }
+
+        return view($this->getViewPrefix().'.'.$action, $props);
     }
 
     protected function validateStore(Request $request): array
