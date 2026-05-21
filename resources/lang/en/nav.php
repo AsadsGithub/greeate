@@ -24,6 +24,7 @@ return [
     'content' => 'Content',
     'notifications' => 'Notifications',
     'home' => 'Home',
+    'coming_soon' => 'Coming Soon',
     'contact' => 'Contact',
     'privacy' => 'Privacy',
 ];

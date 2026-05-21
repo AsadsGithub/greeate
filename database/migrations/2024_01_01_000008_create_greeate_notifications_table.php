@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::create('greeate_notifications', function (Blueprint $table) {
             $table->id();
-            $table->morphs('notifiable');
+            $table->string('notifiable_type');
+            $table->unsignedBigInteger('notifiable_id');
             $table->string('type');
             $table->string('title');
             $table->text('body')->nullable();
@@ -20,7 +21,8 @@ return new class extends Migration
             $table->timestamp('sent_at')->nullable();
             $table->timestamps();
 
-            $table->index(['notifiable_type', 'notifiable_id', 'read_at']);
+            $table->index(['notifiable_type', 'notifiable_id'], 'greeate_notif_morph_idx');
+            $table->index(['notifiable_type', 'notifiable_id', 'read_at'], 'greeate_notif_unread_idx');
         });
     }
 

@@ -8,6 +8,6 @@ class ComingSoonController extends BaseController
 {
     public function index()
     {
-        return view('greeate::frontend.comingsoon');
+        return $this->greeatePage('greeate/frontend/coming-soon');
     }
 }

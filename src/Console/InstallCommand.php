@@ -302,7 +302,7 @@ class InstallCommand extends Command
 
     protected function patchHostHomeRoute(): void
     {
-        if (! config('greeate.patch_host_home_route', true)) {
+        if (! config('greeate.patch_host_home_route', true) || config('greeate.load_frontend_routes', true)) {
             return;
         }
 
@@ -373,7 +373,7 @@ PHP;
         $content = File::get($envPath);
         $vars = [
             'GREEATE_UI' => 'inertia',
-            'GREEATE_LOAD_FRONTEND_ROUTES' => 'false',
+            'GREEATE_LOAD_FRONTEND_ROUTES' => 'true',
             'GREEATE_ADMIN_PREFIX' => 'dashboard',
             'GREEATE_PATCH_HOST_HOME' => 'true',
         ];

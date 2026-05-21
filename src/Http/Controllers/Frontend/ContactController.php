@@ -16,7 +16,7 @@ class ContactController extends BaseController
 
     public function index()
     {
-        return view('greeate::frontend.contact');
+        return $this->greeatePage('greeate/frontend/contact');
     }
 
     public function store(Request $request)

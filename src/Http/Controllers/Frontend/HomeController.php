@@ -8,6 +8,6 @@ class HomeController extends BaseController
 {
     public function index()
     {
-        return view('greeate::frontend.home');
+        return $this->greeatePage('greeate/frontend/home');
     }
 }

@@ -7,7 +7,7 @@ use Greeate\Greeate\Http\Controllers\Frontend\MaintenanceController;
 use Greeate\Greeate\Http\Controllers\Frontend\PageController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'greeate.locale', 'greeate.maintenance'])->group(function () {
+Route::middleware(['web', 'greeate.locale', 'greeate.maintenance', 'greeate.inertia'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('greeate.home');
     Route::get('/coming-soon', [ComingSoonController::class, 'index'])->name('greeate.coming-soon');
     Route::get('/contact', [ContactController::class, 'index'])->name('greeate.contact');
