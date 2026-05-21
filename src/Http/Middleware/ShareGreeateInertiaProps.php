@@ -16,7 +16,7 @@ class ShareGreeateInertiaProps
     public function handle(Request $request, Closure $next): Response
     {
         if (class_exists(Inertia::class) && config('greeate.ui', 'inertia') === 'inertia') {
-            Inertia::share(fn () => $this->shared($request));
+            Inertia::share($this->shared($request));
         }
 
         return $next($request);
